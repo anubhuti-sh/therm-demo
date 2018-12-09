@@ -10,6 +10,13 @@ const {
   NotFoundError,
 } = require('../utils/errors');
 
+// welcome controller
+const hello = (req, res) => {
+  res.status(200).json({
+    msg: 'welocme to geo info API',
+  });
+};
+
 // Login controller
 const login = async (req, res, next) => {
   const { username, password } = req.body;
@@ -107,4 +114,5 @@ module.exports = {
   login,
   getAreas,
   getSegments,
+  hello,
 };

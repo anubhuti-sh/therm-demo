@@ -6,6 +6,8 @@ const { errorHandler } = require('../middlewares/errors');
 
 const router = express.Router();
 
+router.get('/', user.hello);
+
 router.post('/login', validate.login, user.login, jwt.sendToken);
 
 router.get('/allareas', jwt.verifyToken, user.getAreas);
