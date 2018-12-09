@@ -3,7 +3,7 @@
 #### _Gets area, centroid, and center of mass of a given area segment_
 
 ### deployed URL
-[geo]
+[geoinfo](https://geo-info.herokuapp.com/v1/user)
 
 ### Specification
 Geo Info API lets you to see the information of segments present in a area this information involves coordinates, area, centroid and center of mass -
@@ -15,7 +15,7 @@ Geo Info API lets you to see the information of segments present in a area this 
 
 ### Postman API collection
 [API collection](https://www.getpostman.com/collections/1673a43f147c823cd41f)
-baseUrl - 
+baseUrl - https://geo-info.herokuapp.com/v1/
 
 ### Running Project locally
 
@@ -27,13 +27,16 @@ Follow these steps in order to set up this project in your local system
 5. API is live on `http://localhost:3000`.
 
 ### API end points
-1. /login
+1. user/
+index
+
+1. user/login
 use	"username": "john" and "password": "qwerty123" to login and get jwt token
 
-2. /allareas
+2. user/allareas
 to get list of all areas
 
-3. /segments/:uid?q=<query>&sort=<asc|desc>
+3. user/segments/:uid?q=<query>&sort=<asc|desc>
 to get segment information
 valid values of q = area, centroid, centerOfMass
 valid values of sort = asc, desc
