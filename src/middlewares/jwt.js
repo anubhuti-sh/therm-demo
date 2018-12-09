@@ -5,7 +5,7 @@ const {
 } = require('../utils/errors');
 
 const sendToken = (req, res, next) => {
-  jwt.sign({ username: req.parsed.username }, process.env.SECRET, { expiresIn: '1200s' }, (err, token) => {
+  jwt.sign({ username: req.parsed.username }, process.env.SECRET, { expiresIn: '3000s' }, (err, token) => {
     if (err) {
       return next(new OperationalError('Could not generate Token'));
     }
