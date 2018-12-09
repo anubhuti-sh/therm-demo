@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
 // Using CORS
 app.use(cors());
 
+// eslint-disable-next-line new-cap
 const limiter = new rateLimit({
   windowMs: 60 * 1000, // 1 minutes
   max: 50, // limit each IP to 100 requests per windowMs
