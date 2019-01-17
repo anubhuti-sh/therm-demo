@@ -36,10 +36,19 @@ class DatabaseError extends Error {
   }
 }
 
+class OperationalError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'OperationalError';
+    this.message = message;
+  }
+}
+
 module.exports = {
   ValidationError,
   PermissionError,
   AuthorizationError,
   DatabaseError,
   NotFoundError,
+  OperationalError,
 };

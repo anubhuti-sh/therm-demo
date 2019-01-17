@@ -5,7 +5,7 @@ const {
 } = require('../utils/errors');
 
 const sendToken = (req, res, next) => {
-  jwt.sign({ username: req.parsed.username }, process.env.SECRET, { expiresIn: '3000s' }, (err, token) => {
+  jwt.sign({ uid: req.body.uid }, process.env.SECRET, { expiresIn: '3000s' }, (err, token) => {
     if (err) {
       return next(new OperationalError('Could not generate Token'));
     }
@@ -29,10 +29,11 @@ const verifyToken = (req, res, next) => {
     return next(new AuthorizationError('Did not receive token'));
   }
 
-  jwt.verify(token, process.env.SECRET, (err) => {
+  jwt.verify(token, process.env.SECRET, (err, decoded) => {
     if (err) {
       return next(new AuthorizationError('Token Invalid. Forbidden!'));
     }
+    req.decoded = decoded;
     return next();
   });
 };

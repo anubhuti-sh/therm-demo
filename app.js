@@ -9,7 +9,7 @@ const rateLimit = require('express-rate-limit');
 require('./config/db');
 
 // require routes
-const users = require('./src/routes/users');
+const thermRoutes = require('./src/routes/therm');
 
 // Initializing express app
 const app = express();
@@ -48,9 +48,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Router Initialization
 app.get('/v1', (req, res) => {
   res.status(200).json({
-    msg: 'Welcome to geo area calculator',
+    msg: 'Welcome to unity therm',
   });
 });
-app.use('/v1/user', users);
+app.use('/v1/therm', thermRoutes);
 
 module.exports = app;

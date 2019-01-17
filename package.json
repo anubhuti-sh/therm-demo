@@ -1,16 +1,15 @@
 {
-  "name": "geoarea",
+  "name": "therm_temp",
   "version": "1.0.0",
-  "description": "real time geo segment area calculator",
+  "description": "therm",
   "main": "bin/www",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bin/www"
   },
-  "author": "anu-007",
+  "author": "anubhuti-sh",
   "license": "ISC",
   "dependencies": {
-    "@turf/turf": "^5.1.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
