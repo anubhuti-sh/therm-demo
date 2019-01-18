@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-restricted-syntax */
 const Orgs = require('../models/org');
 const Groups = require('../models/group');
 const Projects = require('../models/project');
@@ -34,70 +36,49 @@ const insert = async (req, res, next) => {
     return next(new DatabaseError('Error in adding organizations'));
   }
 
-  // populates group db
-  const groupArr = [];
-  const groupIds = [];
-  const allGroups = await Groups.find({}, { uid: 1, _id: 0 });
+  let groupObj; let projObj; let grp; let proj;
 
-  allGroups.forEach((g) => {
-    groupIds.push(g.uid);
-  });
+  // populates group collection
+  for (grp of data.groups) {
+    groupObj = {
+      uid: grp.uid,
+      ...(grp.name && { name: grp.name }),
+      ...(grp.description && { description: grp.description }),
+      ...(grp.active && { active: grp.active }),
+      ...(grp.owner && { owner: grp.owner }),
+      ...(grp.readUser && { readUser: grp.readUser }),
+      ...(grp.writeUser && { writeUser: grp.writeUser }),
+      ...(newEntry._id && { organization: newEntry._id }),
+    };
 
-  data.groups.forEach((gp) => {
-    // current grooup not found in db groupId array
-    if (!(groupIds.indexOf(gp.uid.toString()) + 1)) {
-      groupArr.push({
-        uid: gp.uid,
-        name: gp.name,
-        description: gp.description,
-        active: gp.active,
-        owner: gp.owner,
-        readUser: gp.readUser,
-        writeUser: gp.writeUser,
-        // eslint-disable-next-line no-underscore-dangle
-        organization: newEntry._id,
-      });
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await Groups.updateOne({ uid: grp.uid }, { $set: groupObj }, { upsert: true });
+    } catch (err) {
+      return next(new DatabaseError(`Error in adding groups with uid ${grp.uid}`));
     }
-  });
 
-  try {
-    await Groups.insertMany(groupArr);
-  } catch (err) {
-    return next(new DatabaseError('Error in adding groups'));
-  }
+    // populates project collection
+    for (proj of grp.projects) {
+      projObj = {
+        uid: proj.uid,
+        ...(proj.name && { name: proj.name }),
+        ...(proj.date && { date: proj.date }),
+        ...(proj.owner && { owner: proj.owner }),
+        ...(proj.active && { active: proj.active }),
+        ...(proj.readUser && { readUser: proj.readUser }),
+        ...(proj.writeUser && { writeUser: proj.writeUser }),
+        ...(proj.data && { data: proj.data }),
+        ...(newEntry._id && { group: newEntry._id }),
+      };
 
-  // populates project db
-  const projArr = [];
-  const projIds = [];
-  const allProj = await Projects.find({}, { uid: 1, _id: 0 });
-
-  allProj.forEach((p) => {
-    projIds.push(p.uid);
-  });
-
-  data.groups.forEach((grp) => {
-    grp.projects.forEach((proj) => {
-      if (!(projIds.indexOf(proj.uid.toString()) + 1)) {
-        projArr.push({
-          uid: proj.uid,
-          name: proj.name,
-          date: proj.date,
-          owner: proj.owner,
-          active: proj.active,
-          readUser: proj.readUser,
-          writeUser: proj.writeUser,
-          data: proj.data,
-          // eslint-disable-next-line no-underscore-dangle
-          group: newEntry._id,
-        });
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await Projects.updateOne({ uid: proj.uid }, { $set: projObj }, { upsert: true });
+      } catch (err) {
+        return next(new DatabaseError(`Error in adding project with uid ${proj.uid}`));
       }
-    });
-  });
-
-  try {
-    await Projects.insertMany(projArr);
-  } catch (err) {
-    return next(new DatabaseError('Error in adding projects'));
+    }
   }
 
   // return response

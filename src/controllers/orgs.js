@@ -55,7 +55,10 @@ const editOrg = async (req, res, next) => {
 const deleteOrg = async (req, res, next) => {
   const { slug } = req.params;
   try {
-    await Org.findByIdAndUpdate({ uid: slug }, { active: false });
+    const orgs = await Org.findOne({ uid: slug });
+
+    orgs.active = false;
+    orgs.save();
 
     return res.status(204).json({
       msg: 'Organization deleted successfully',

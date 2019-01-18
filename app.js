@@ -9,7 +9,7 @@ const rateLimit = require('express-rate-limit');
 require('./config/db');
 
 // require routes
-const thermRoutes = require('./src/routes/therm');
+const indexRoute = require('./src/routes/index');
 
 // Initializing express app
 const app = express();
@@ -51,6 +51,6 @@ app.get('/v1', (req, res) => {
     msg: 'Welcome to unity therm',
   });
 });
-app.use('/v1/therm', thermRoutes);
+app.use('/v1/', indexRoute);
 
 module.exports = app;
