@@ -14,6 +14,22 @@ const UserSchema = new Schema({
   password: {
     type: String,
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
+  organization: {
+    type: String,
+    default: null,
+  },
+  isOwner: {
+    type: Boolean,
+    default: false,
+  },
+  isManager: {
+    type: Boolean,
+    default: true,
+  },
   lastUpdateAt: { type: Date, default: Date.now },
 });
 

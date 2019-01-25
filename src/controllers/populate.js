@@ -15,28 +15,24 @@ const insert = async (req, res, next) => {
   }
 
   // populates organization db
-  let newEntry;
-  const { uid, name, active } = data.organization;
+  let newEntry; let orgObj; let groupObj; let projObj; let grp; let proj;
+
+  // eslint-disable-next-line prefer-const
+  orgObj = {
+    uid: data.organization.uid,
+    ...(data.organization.name && { name: data.organization.name }),
+    ...(data.organization.active && { active: data.organization.active }),
+  };
+
   try {
-    newEntry = await Orgs.findOneAndUpdate({
-      uid,
-    },
-    {
-      $set: {
-        uid,
-        name,
-        active,
-      },
-    },
-    {
-      upsert: true,
-      new: true,
-    });
+    newEntry = await Orgs.findOneAndUpdate(
+      { uid: data.organization.uid },
+      { $set: orgObj },
+      { upsert: true, new: true },
+    );
   } catch (err) {
     return next(new DatabaseError('Error in adding organizations'));
   }
-
-  let groupObj; let projObj; let grp; let proj;
 
   // populates group collection
   for (grp of data.groups) {
