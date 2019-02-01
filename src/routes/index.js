@@ -6,6 +6,7 @@ const projects = require('./projects');
 const orgs = require('./organization');
 const views = require('./views');
 const features = require('./features');
+const metrics = require('./metrics');
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.use('/projects', projects);
 router.use('/orgs', orgs);
 router.use('/views', views);
 router.use('/features', features);
+router.use('/metrics', metrics);
 
 router.use(errorHandler);
 

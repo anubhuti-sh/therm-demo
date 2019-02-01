@@ -22,7 +22,7 @@ app.set('etag', false);
 
 // Body Parser Configuration
 app.use(bodyParser.json({ // to support JSON-encoded bodies
-  limit: '1mb',
+  limit: '100mb',
 }));
 
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies

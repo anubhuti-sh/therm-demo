@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { userObj, geoJsonSchema } = require('./mixins');
-const plugins = require('./plugins');
 
 const { Schema } = mongoose;
 
@@ -51,6 +50,18 @@ const ViewSchema = new Schema({
   issueType: [String],
 });
 
-ViewSchema.plugin(plugins.userPermissions);
+ViewSchema.pre('find', function (next) {
+  this.populate({
+    path: 'projects organization',
+  });
+  next();
+});
+
+ViewSchema.pre('findOne', function (next) {
+  this.populate({
+    path: 'projects organization',
+  });
+  next();
+});
 
 module.exports = mongoose.model('View', ViewSchema);

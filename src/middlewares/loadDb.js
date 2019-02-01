@@ -1,5 +1,6 @@
 const Project = require('../models/project');
 const Group = require('../models/group');
+const View = require('../models/view');
 
 // Role setup for group level privilage
 const loadGroup = async (req, res, next) => {
@@ -55,7 +56,35 @@ const loadProject = async (req, res, next) => {
   next();
 };
 
+const loadView = async (req, res, next) => {
+  const { uid } = req.decoded;
+
+  const owner = await View.findOne({ uid: req.params.viewUID, 'owner.uid': uid });
+  if (owner) {
+    req.user = { role: 'owner', uid };
+  }
+
+  const readUser = await View.findOne({
+    uid: req.params.viewUID,
+    readUser: { $elemMatch: { uid } },
+  });
+  if (readUser.length) {
+    req.user = { role: 'readUser', uid };
+  }
+
+  const writeUser = await View.findOne({
+    uid: req.params.viewUID,
+    writeUser: { $elemMatch: { uid } },
+  });
+  if (writeUser.length) {
+    req.user = { role: 'writeUser', uid };
+  }
+
+  next();
+};
+
 module.exports = {
   loadGroup,
   loadProject,
+  loadView,
 };

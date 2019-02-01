@@ -3,8 +3,8 @@ const {
 } = require('../utils/errors');
 
 const isActive = (req, res, next) => {
-  if (req.user && !req.user.isActive) {
-    return new AuthorizationError('Inactive user');
+  if (req.decoded && !req.decoded.status) {
+    return next(new AuthorizationError('Inactive user'));
   }
   return next();
 };

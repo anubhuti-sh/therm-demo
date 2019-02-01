@@ -18,6 +18,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  role: {
+    type: String,
+    default: null,
+  },
   organization: {
     type: String,
     default: null,

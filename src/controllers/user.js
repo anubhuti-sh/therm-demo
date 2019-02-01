@@ -26,6 +26,7 @@ const login = async (req, res, next) => {
   if (foundUser === null || !isMatch) {
     return next(new NotFoundError('Username or password do not match'));
   }
+  req.local = foundUser;
   return next();
 };
 

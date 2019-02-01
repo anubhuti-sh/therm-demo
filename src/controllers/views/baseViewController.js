@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 const config = require('config');
 const View = require('../../models/view');
 
@@ -93,7 +94,25 @@ const parsedView = (views, query) => {
   } = query;
 
   const outputViewArray = [];
+
   views.forEach((view) => {
+    // let viewGroups = view.projects.map(proj => proj.group);
+    // viewGroups = viewGroups.filter(grp => grp.active);
+
+    // const finalGroups = []; let group;
+
+    // for (group of viewGroups) {
+    //   const groupObj = {
+    //     uid: group.uid,
+    //     name: group.name,
+    //     description: group.description,
+    //   };
+    //   if (project) {
+    //     groupObj.projects = parseViewProjects(view, queryParams, groupObj);
+    //   } else groupObj.projects = `${config.get('server.url')}/views/${view.uid}/groups/${group.uid}/projects`;
+    //   finalGroups.push(groupObj);
+    // }
+
     const baseViewObj = {
       uid: view.uid,
       name: view.name,
@@ -111,7 +130,7 @@ const parsedView = (views, query) => {
           name: view.organization ? view.organization.name : null,
         },
       }),
-      //   ...((groups || project) && { groups: parseViewGroups(view, query) }),
+      // ...((groups || project) && { groups: finalGroups }),
       ...(!(groups || project) && { groups: `${config.get('server.url')}/views/${view.uid}/groups` }),
       ...(metrics && { metrics: view.metrics }),
       ...(!metrics && { metrics: `${config.get('server.url')}/metrics/view/${view.uid}` }),

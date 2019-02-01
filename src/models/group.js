@@ -1,4 +1,6 @@
+/* eslint-disable func-names */
 const mongoose = require('mongoose');
+const { userObj } = require('./mixins');
 
 const { Schema } = mongoose;
 
@@ -25,35 +27,28 @@ const GroupSchema = new Schema({
     ref: 'Organization',
   },
   owner: {
-    uid: {
-      type: String,
-      default: null,
-    },
-    email: {
-      type: String,
-      default: null,
-    },
+    type: userObj,
   },
   readUser: [{
-    uid: {
-      type: String,
-      default: null,
-    },
-    email: {
-      type: String,
-      default: null,
-    },
+    type: userObj,
   }],
   writeUser: [{
-    uid: {
-      type: String,
-      default: null,
-    },
-    email: {
-      type: String,
-      default: null,
-    },
+    type: userObj,
   }],
+});
+
+GroupSchema.pre('find', function (next) {
+  this.populate({
+    path: 'organization',
+  });
+  next();
+});
+
+GroupSchema.pre('findOne', function (next) {
+  this.populate({
+    path: 'organization',
+  });
+  next();
 });
 
 module.exports = mongoose.model('Group', GroupSchema);
