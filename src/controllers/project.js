@@ -38,7 +38,128 @@ const deleteProj = async (req, res, next) => {
   }
 };
 
+const getAllProjects = async (user) => {
+  const organizationFilter = [];
+
+  if (user.organization) {
+    organizationFilter.push({ 'organization.uid': user.organization });
+  }
+
+  const baseQuery = [{
+    $match: {
+      $and: [
+        { active: true },
+        ...organizationFilter,
+      ],
+    },
+  }];
+
+  const extractGroup = [
+    {
+      $lookup: {
+        from: 'groups',
+        localField: 'group',
+        foreignField: '_id',
+        as: 'group',
+      },
+    },
+    {
+      $unwind: {
+        path: '$group',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        group: {
+          $ifNull: ['$group', {
+            owner: {},
+            active: true,
+            read: [],
+            write: [],
+            labelsRead: [],
+            labelsWrite: [],
+          }],
+        },
+      },
+    },
+    {
+      $match: { 'group.active': true },
+    },
+  ];
+
+  const extractOrganization = [
+    {
+      $lookup: {
+        from: 'organizations',
+        localField: 'group.organization',
+        foreignField: '_id',
+        as: 'organization',
+      },
+    },
+    {
+      $unwind: {
+        path: '$organization',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        organization: {
+          $ifNull: ['$organization', {
+            owner: {},
+            active: true,
+            read: [],
+            write: [],
+            labelsRead: [],
+            labelsWrite: [],
+          }],
+        },
+      },
+    },
+    {
+      $match: { 'organization.active': true },
+    },
+  ];
+
+  const combineUsersandLabels = [
+    {
+      $addFields: {
+        read: {
+          $setUnion: [
+            { $ifNull: ['$read', []] },
+            { $ifNull: ['$group.read', []] },
+            { $ifNull: ['$organization.read', []] },
+          ],
+        },
+
+        write: {
+          $setUnion: [
+            { $ifNull: ['$write', []] },
+            { $ifNull: ['$group.write', []] },
+            { $ifNull: ['$organization.write', []] },
+          ],
+        },
+      },
+    },
+  ];
+
+  const aggregatedProjects = await Project.aggregate([
+    ...extractGroup,
+    ...extractOrganization,
+    ...baseQuery,
+    ...combineUsersandLabels,
+  ]);
+
+  const projectUids = aggregatedProjects.map(aggrProject => aggrProject.uid);
+
+  const proj = await Project.find({ uid: { $in: projectUids } });
+
+  return proj;
+};
+
 module.exports = {
   getProj,
   deleteProj,
+  getAllProjects,
 };

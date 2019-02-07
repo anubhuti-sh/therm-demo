@@ -59,7 +59,6 @@ const addProjectFeatures = async (project, data) => {
   await Table.insertMany(tableObjs);
 
   for (const issueObj of issueObjs) {
-    console.log(issueObj.polygon.properties.parent_uid);
     // eslint-disable-next-line no-await-in-loop
     const issueTable = await Table.findOne({ uid: issueObj.polygon.properties.parent_uid });
     if (issueTable) issueObj.table = issueTable;

@@ -6,7 +6,7 @@ const View = require('../models/view');
 const loadGroup = async (req, res, next) => {
   const { uid } = req.decoded;
 
-  const owner = await Group.findOne({ 'owner.uid': uid });
+  const owner = await Group.findOne({ uid: req.params.groupUID, 'owner.uid': uid });
   if (owner) {
     req.user = { role: 'owner', uid };
   }
@@ -59,7 +59,12 @@ const loadProject = async (req, res, next) => {
 const loadView = async (req, res, next) => {
   const { uid } = req.decoded;
 
-  const owner = await View.findOne({ uid: req.params.viewUID, 'owner.uid': uid });
+  const owner = await View.findOne({
+    $and: [
+      { uid: req.params.viewUID },
+      { 'owner.uid': uid },
+    ],
+  });
   if (owner) {
     req.user = { role: 'owner', uid };
   }
@@ -68,7 +73,7 @@ const loadView = async (req, res, next) => {
     uid: req.params.viewUID,
     readUser: { $elemMatch: { uid } },
   });
-  if (readUser.length) {
+  if (readUser && readUser.length) {
     req.user = { role: 'readUser', uid };
   }
 
@@ -76,7 +81,7 @@ const loadView = async (req, res, next) => {
     uid: req.params.viewUID,
     writeUser: { $elemMatch: { uid } },
   });
-  if (writeUser.length) {
+  if (writeUser && writeUser.length) {
     req.user = { role: 'writeUser', uid };
   }
 

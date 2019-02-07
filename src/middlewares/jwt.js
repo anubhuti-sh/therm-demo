@@ -13,7 +13,7 @@ const sendToken = (req, res, next) => {
     isOwner: req.local.isOwner,
     isManager: req.local.isManager,
     role: req.local.role,
-  }, process.env.SECRET, { expiresIn: '3000s' }, (err, token) => {
+  }, process.env.SECRET, { expiresIn: '30000000s' }, (err, token) => {
     if (err) {
       return next(new OperationalError('Could not generate Token'));
     }
